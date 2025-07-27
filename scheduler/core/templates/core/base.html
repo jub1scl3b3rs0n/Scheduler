@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scheduler</title>
+</head>
+<body>
+    {% if user.is_authenticated %}
+        <p>Olá, {{ user.username }} | <a href="{% url 'logout' %}">Sair</a></p>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a> | <a href="{% url 'register' %}">Registrar</a>
+    {% endif %}
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>
