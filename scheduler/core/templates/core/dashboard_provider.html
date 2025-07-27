@@ -1,6 +1,12 @@
 {% extends "core/base.html" %}
 {% block content %}
 <h2>Dashboard - Prestador</h2>
-<p>Você é um prestador de serviço.</p>
-<!-- Aqui você vai listar os agendamentos no futuro -->
+<h3>Agendamentos recebidos</h3>
+<ul>
+    {% for a in appointments %}
+        <li>{{ a.date }} às {{ a.time }} com {{ a.client.username }} [{{ a.status }}]</li>
+    {% empty %}
+        <li>Sem agendamentos</li>
+    {% endfor %}
+</ul>
 {% endblock %}

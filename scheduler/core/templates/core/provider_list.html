@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<h2>Prestadores disponíveis</h2>
+<ul>
+    {% for provider in providers %}
+        <li>
+            <a href="{% url 'provider_detail' provider.id %}">
+                {{ provider.user.username }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

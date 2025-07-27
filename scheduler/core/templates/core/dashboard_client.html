@@ -1,6 +1,12 @@
 {% extends "core/base.html" %}
 {% block content %}
 <h2>Dashboard - Cliente</h2>
-<p>Você é um cliente.</p>
-<!-- Aqui você vai listar os agendamentos feitos -->
+<h3>Seus agendamentos</h3>
+<ul>
+    {% for a in appointments %}
+        <li>{{ a.date }} às {{ a.time }} com {{ a.provider.user.username }} [{{ a.status }}]</li>
+    {% empty %}
+        <li>Você ainda não agendou nada</li>
+    {% endfor %}
+</ul>
 {% endblock %}

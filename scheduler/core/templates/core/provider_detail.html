@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>{{ provider.user.username }}</h2>
+<p>{{ provider.bio }}</p>
+
+<h3>Agendar horário</h3>
+<ul>
+    {% for slot in available_slots %}
+        <li>
+            {{ slot.date }} às {{ slot.time }}
+            <form method="post" action="{% url 'book_appointment' provider.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="date" value="{{ slot.date|date:'Y-m-d' }}">
+                <input type="hidden" name="time" value="{{ slot.time|time:'H:i' }}">
+                <button type="submit">Agendar</button>
+            </form>
+        </li>
+    {% empty %}
+        <p>Sem horários disponíveis nos próximos 7 dias.</p>
+    {% endfor %}
+</ul>
+{% endblock %}
