@@ -8,7 +8,7 @@
     {% for slot in available_slots %}
         <li>
             {{ slot.date }} às {{ slot.time }}
-            <form method="post" action="{% url 'book_appointment' provider.id %}" style="display:inline;">
+            <form method="post" action="{% url 'book' provider.id %}" style="display:inline;">
                 {% csrf_token %}
                 <input type="hidden" name="date" value="{{ slot.date|date:'Y-m-d' }}">
                 <input type="hidden" name="time" value="{{ slot.time|time:'H:i' }}">

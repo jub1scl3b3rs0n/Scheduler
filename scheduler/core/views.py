@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Q
+from django.contrib import messages
 
 from core.forms import DAYS_OF_WEEK, AvailabilityForm
 from .models import Appointment, ServiceProvider
@@ -120,9 +122,6 @@ def book_appointment(request, provider_id):
         date = request.POST["date"]
         time_str = request.POST["time"]
         time_obj = datetime.strptime(time_str, "%H:%M").time()
-        # time_obj = datetime.strptime(time_str, "%H:%M:%S").time() if ":" in time_str else datetime.strptime(time_str, "%H:%M").time()
-
-        # Verificar se já existe agendamento no mesmo horário
         exists = Appointment.objects.filter(provider=provider, date=date, time=time_obj).exists()
         if not exists:
             Appointment.objects.create(
@@ -133,7 +132,7 @@ def book_appointment(request, provider_id):
                 status="pending"
             )
         return redirect("dashboard")
-    return redirect("index")
+    return redirect("provider_list")
 
 @only_providers
 @login_required
@@ -153,6 +152,7 @@ def edit_availability(request):
                 availability[day] = times
             provider.available_days = availability
             provider.save()
+            messages.success(request, "Disponibilidade atualizada com sucesso.")
             return redirect("dashboard")
     else:
         # preencher com os dados atuais
@@ -180,3 +180,18 @@ def update_status(request, appointment_id):
         except Appointment.DoesNotExist:
             pass
     return redirect("dashboard")
+
+def search_providers(request):
+    query = request.GET.get("q", "")
+    results = []
+
+    if query:
+        results = ServiceProvider.objects.filter(
+            Q(user__username__icontains=query) |
+            Q(bio__icontains=query)
+        )
+
+    return render(request, "core/search.html", {
+        "query": query,
+        "results": results
+    })
