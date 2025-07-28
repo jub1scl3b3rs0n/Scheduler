@@ -2,8 +2,19 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+
+from core.forms import DAYS_OF_WEEK, AvailabilityForm
 from .models import Appointment, ServiceProvider
 from datetime import datetime, timedelta, time
+
+def only_providers(view_func):
+    def wrapper(request, *args, **kwargs):
+        try:
+            _ = request.user.serviceprovider
+            return view_func(request, *args, **kwargs)
+        except ServiceProvider.DoesNotExist:
+            return redirect("dashboard")
+    return wrapper
 
 def index(request):
     return render(request, "core/index.html")
@@ -123,3 +134,49 @@ def book_appointment(request, provider_id):
             )
         return redirect("dashboard")
     return redirect("index")
+
+@only_providers
+@login_required
+def edit_availability(request):
+    try:
+        provider = request.user.serviceprovider
+    except ServiceProvider.DoesNotExist:
+        return redirect("dashboard")
+
+    if request.method == "POST":
+        form = AvailabilityForm(request.POST)
+        if form.is_valid():
+            availability = {}
+            for day, _ in DAYS_OF_WEEK:
+                raw_input = form.cleaned_data.get(day, "")
+                times = [t.strip() for t in raw_input.split(",") if t.strip()]
+                availability[day] = times
+            provider.available_days = availability
+            provider.save()
+            return redirect("dashboard")
+    else:
+        # preencher com os dados atuais
+        initial = {}
+        for day, _ in DAYS_OF_WEEK:
+            times = provider.available_days.get(day, [])
+            initial[day] = ", ".join(times)
+        form = AvailabilityForm(initial=initial)
+
+    return render(request, "core/edit_availability.html", {
+        "form": form
+    })
+
+@login_required
+def update_status(request, appointment_id):
+    if request.method == "POST":
+        try:
+            appointment = Appointment.objects.get(pk=appointment_id)
+            if appointment.provider.user != request.user:
+                return redirect("dashboard")
+            new_status = request.POST["status"]
+            if new_status in ["pending", "confirmed", "cancelled"]:
+                appointment.status = new_status
+                appointment.save()
+        except Appointment.DoesNotExist:
+            pass
+    return redirect("dashboard")

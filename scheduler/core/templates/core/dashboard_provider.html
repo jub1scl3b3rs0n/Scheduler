@@ -1,10 +1,23 @@
 {% extends "core/base.html" %}
 {% block content %}
 <h2>Dashboard - Prestador</h2>
+<a href="{% url 'edit_availability' %}" class="btn">Editar Disponibilidade</a>
 <h3>Agendamentos recebidos</h3>
 <ul>
     {% for a in appointments %}
-        <li>{{ a.date }} às {{ a.time }} com {{ a.client.username }} [{{ a.status }}]</li>
+        <li>
+            {{ a.date }} às {{ a.time }} com {{ a.client.username }} [{{ a.status }}]
+
+            <form method="post" action="{% url 'update_status' a.id %}" style="display:inline;">
+                {% csrf_token %}
+                <select name="status">
+                    <option value="pending" {% if a.status == 'pending' %}selected{% endif %}>Pendente</option>
+                    <option value="confirmed" {% if a.status == 'confirmed' %}selected{% endif %}>Confirmado</option>
+                    <option value="cancelled" {% if a.status == 'cancelled' %}selected{% endif %}>Cancelado</option>
+                </select>
+                <button type="submit">Atualizar</button>
+            </form>
+        </li>
     {% empty %}
         <li>Sem agendamentos</li>
     {% endfor %}

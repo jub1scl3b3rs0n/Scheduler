@@ -5,7 +5,7 @@
 </head>
 <body>
     {% if user.is_authenticated %}
-        <p>Olá, {{ user.username }} | <a href="{% url 'logout' %}">Sair</a></p>
+        <p><a href="{% url 'dashboard' %}" class="btn">Dashboard</a> | Olá, {{ user.username }} | <a href="{% url 'logout' %}">Sair</a></p>
     {% else %}
         <a href="{% url 'login' %}">Login</a> | <a href="{% url 'register' %}">Registrar</a>
     {% endif %}

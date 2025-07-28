@@ -1,6 +1,7 @@
 {% extends "core/base.html" %}
 {% block content %}
 <h2>Dashboard - Cliente</h2>
+<a href="{% url 'provider_list' %}" class="btn">Provedores</a>
 <h3>Seus agendamentos</h3>
 <ul>
     {% for a in appointments %}
