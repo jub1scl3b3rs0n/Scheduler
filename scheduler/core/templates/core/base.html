@@ -1,7 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Scheduler</title>
+    <link rel="stylesheet" href="{% static 'core/styles.css' %}" />
 </head>
 <body>
     {% if messages %}
@@ -15,9 +17,9 @@
 {% endif %}
 
     {% if user.is_authenticated %}
-        <p><a href="{% url 'dashboard' %}" class="btn">Dashboard</a> | <a href="{% url 'search_providers' %}">Buscar Provedor</a> | Olá, {{ user.username }} | <a href="{% url 'logout' %}">Sair</a></p>
+        <div class="navbar"><p><a href="{% url 'dashboard' %}" class="btn">Dashboard</a> | <a href="{% url 'search_providers' %}">Search Providers</a> | Hello, {{ user.username }} | <a href="{% url 'logout' %}">Logout</a></p></div>
     {% else %}
-        <a href="{% url 'login' %}">Login</a> | <a href="{% url 'register' %}">Registrar</a>
+        <div class="navbar"><a href="{% url 'login' %}">Login </a> | <a href="{% url 'register' %}"> Register</a></div>
     {% endif %}
     <hr>
     {% block content %}{% endblock %}

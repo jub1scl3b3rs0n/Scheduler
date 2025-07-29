@@ -1,10 +1,13 @@
 {% extends "core/base.html" %}
 {% block content %}
-<h2>Editar Disponibilidade</h2>
+<div class="container">
+<h2>Edit availability</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Salvar</button>
+    <button type="submit">Save</button>
 </form>
-<a href="{% url 'dashboard' %}">Voltar</a>
+</div>
+<a href="{% url 'dashboard' %}" class="button">Back</a>
+
 {% endblock %}

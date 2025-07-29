@@ -1,0 +1,124 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Corpo da página */
+body {
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #004080;
+  padding: 10px 20px;
+  color: #fff;
+}
+
+.navbar a:link, .navbar a:visited{
+  color: white;
+  text-decoration: none;
+}
+
+/* Container centralizado */
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  background: white;
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Cabeçalhos */
+h1, h2, h3 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* Listas */
+ul {
+  width: 100%;
+  list-style-position: inside;
+  text-align: center;
+}
+
+ul li {
+  border-bottom: 1px solid #ddd;
+  list-style-position: inside; 
+  padding: 10px;
+  margin: 0 auto;    
+  max-width: 400px;   
+  text-align: center; 
+}
+
+
+ul li:last-child {
+  border-bottom: none;
+}
+
+/* Formulários */
+label {
+  display: block;
+  text-align: left;
+  margin-bottom: 6px;
+  margin-left: 0px;
+  font-weight: 600;
+}
+
+input, select, button, textarea, .button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.form-group input[type="checkbox"] {
+  width: auto;
+}
+
+
+button, .button {
+  background-color: #004080;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  justify-content: center;
+}
+
+button:hover, .button:hover {
+  background-color: #00264d;
+}
+
+/* Responsividade */
+@media(max-width: 768px) {
+  .container {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .navbar {
+    justify-content: center;
+  }
+}

@@ -1,23 +1,26 @@
 {% extends "core/base.html" %}
 {% block content %}
+<div class="container">
 <h2>{{ provider.user.username }}</h2>
 <p>{{ provider.bio }}</p>
 
-<h3>Agendar horário</h3>
+<h3>Schedule an appointment</h3>
 <ul>
     {% for slot in available_slots %}
         <li>
-            {{ slot.date }} às {{ slot.time }}
+            {{ slot.date }} at {{ slot.time }}
             <form method="post" action="{% url 'book' provider.id %}" style="display:inline;">
                 {% csrf_token %}
                 <input type="hidden" name="date" value="{{ slot.date|date:'Y-m-d' }}">
                 <input type="hidden" name="time" value="{{ slot.time|time:'H:i' }}">
-                <button type="submit">Agendar</button>
+                <button type="submit">Book</button>
             </form>
         </li>
     {% empty %}
-        <p>Sem horários disponíveis nos próximos 7 dias.</p>
+        <p>No available times in the next 7 days</p>
     {% endfor %}
 </ul>
-<a href="{% url 'provider_list' %}" class="btn">Voltar</a>
+</div>
+<a href="{% url 'provider_list' %}" class="button">Back</a>
+
 {% endblock %}

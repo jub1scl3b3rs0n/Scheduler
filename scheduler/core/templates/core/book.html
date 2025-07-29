@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Appointment</title>
+  <link rel="stylesheet" href="{% static 'core/styles.css' %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="container">
+    <h2>Book Appointment with {{ provider.user.username }}</h2>
+
+    <form method="post">
+      {% csrf_token %}
+      
+      <label for="date-select">Choose a date:</label>
+      <input type="date" id="date-select" name="date" required>
+
+      <label for="time-select">Choose a time:</label>
+      <select id="time-select" name="time" required>
+        <option value="">Select a time</option>
+      </select>
+
+      <button type="submit">Book</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("date-select").addEventListener("change", function () {
+      const date = this.value;
+      const providerId = "{{ provider.id }}";
+      const url = `/provider/${providerId}/available-times/?date=${date}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const timeSelect = document.getElementById("time-select");
+          timeSelect.innerHTML = "<option value=''>Select a time</option>";
+
+          if (data.times && data.times.length > 0) {
+            data.times.forEach(time => {
+              const option = document.createElement("option");
+              option.value = time;
+              option.textContent = time;
+              timeSelect.appendChild(option);
+            });
+          } else {
+            const option = document.createElement("option");
+            option.textContent = "No available times";
+            timeSelect.appendChild(option);
+          }
+        })
+        .catch(err => {
+          alert("Error loading times");
+          console.error(err);
+        });
+    });
+  </script>
+</body>
+</html>

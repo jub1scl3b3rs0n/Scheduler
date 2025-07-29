@@ -1,20 +1,22 @@
 {% extends "core/base.html" %}
 {% block content %}
-<h2>Buscar Prestadores</h2>
+<div class="container">
+<h2>Serach providers</h2>
 <form method="get">
-    <input type="text" name="q" placeholder="Nome ou serviço" value="{{ query }}">
-    <button type="submit">Buscar</button>
+    <input type="text" name="q" placeholder="Name" value="{{ query }}">
+    <button type="submit">Search</button>
 </form>
 
 {% if results %}
     <ul>
         {% for p in results %}
             <li>{{ p.user.username }} — {{ p.service_type }}
-                <a href="{% url 'book' p.id %}">Agendar</a>
+                <a href="{% url 'book' p.id %}">Book</a>
             </li>
         {% endfor %}
     </ul>
 {% elif query %}
-    <p>Nenhum prestador encontrado.</p>
+    <p>No providers found</p>
 {% endif %}
+</div>
 {% endblock %}

@@ -1,7 +1,8 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-<h2>Prestadores disponíveis</h2>
+<div class="container">
+<h2>Available providers</h2>
 <ul>
     {% for provider in providers %}
         <li>
@@ -11,5 +12,7 @@
         </li>
     {% endfor %}
 </ul>
-<a href="{% url 'dashboard' %}" class="btn">Voltar</a>
+<br>
+<a href="{% url 'dashboard' %}" class="button">Back</a>
+</div>
 {% endblock %}

@@ -1,13 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.contrib import messages
+from django.http import JsonResponse
+from datetime import datetime, time, timedelta
 
 from core.forms import DAYS_OF_WEEK, AvailabilityForm
 from .models import Appointment, ServiceProvider
-from datetime import datetime, timedelta, time
 
 def only_providers(view_func):
     def wrapper(request, *args, **kwargs):
@@ -117,8 +118,9 @@ def provider_detail(request, provider_id):
 
 @login_required
 def book_appointment(request, provider_id):
+    provider = ServiceProvider.objects.get(pk=provider_id)
+    
     if request.method == "POST":
-        provider = ServiceProvider.objects.get(pk=provider_id)
         date = request.POST["date"]
         time_str = request.POST["time"]
         time_obj = datetime.strptime(time_str, "%H:%M").time()
@@ -132,7 +134,7 @@ def book_appointment(request, provider_id):
                 status="pending"
             )
         return redirect("dashboard")
-    return redirect("provider_list")
+    return render(request, "core/book.html", {"provider": provider})
 
 @only_providers
 @login_required
@@ -195,3 +197,51 @@ def search_providers(request):
         "query": query,
         "results": results
     })
+
+# def get_available_times(request, provider_id):
+#     date_str = request.GET.get("date")
+#     try:
+#         date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+#         provider = ServiceProvider.objects.get(pk=provider_id)
+#         available = Appointment.objects.filter(provider=provider, date=date_obj).first()
+
+#         if available:
+#             times = available.times  # Supondo que seja uma lista
+#         else:
+#             times = []
+
+#         return JsonResponse({"times": times})
+#     except Exception as e:
+#         return JsonResponse({"error": str(e)}, status=400)
+
+def available_times(request, provider_id):
+    date_str = request.GET.get("date")
+    if not date_str:
+        return JsonResponse({"times": []})
+
+    try:
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return JsonResponse({"times": []})
+
+    provider = get_object_or_404(ServiceProvider, pk=provider_id)
+
+    # Exemplo: gera horários das 9h às 17h de 1 em 1 hora
+    start = time(9, 0)
+    end = time(17, 0)
+    interval = timedelta(minutes=60)
+
+    times = []
+    current_dt = datetime.combine(date_obj, start)
+    end_dt = datetime.combine(date_obj, end)
+
+    # Pega agendamentos já marcados nesse dia
+    booked = Appointment.objects.filter(provider=provider, date=date_obj).values_list('time', flat=True)
+
+    while current_dt <= end_dt:
+        current_time = current_dt.time()
+        if current_time not in booked:
+            times.append(current_time.strftime("%H:%M"))
+        current_dt += interval
+
+    return JsonResponse({"times": times})
